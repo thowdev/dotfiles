@@ -1,4 +1,4 @@
-.PHONY: clean install install-stow stow help uninstall
+.PHONY: clean install install-stow simulate stow help uninstall
 
 .DEFAULT_GOAL := help
 
@@ -30,6 +30,7 @@ help:
 	@echo "  install		Install GNU stow using the system package manager"
 	@echo "  install-stow		see \"install\"-target"
 	@echo "  stow			Stow all files to ${HOME}, ignoring Makefile and stow-related files"
+	@echo "  simulate		Simulate stow command from "stow"-target
 	@echo "  uninstall		see \"clean\"-target"
 	@echo ""
 	@echo "Detected OS: $(OS)"
@@ -54,6 +55,12 @@ else
 	@echo "Unsupported operating system"
 	@exit 1
 endif
+
+###############################################################################
+# Simulate stow command from "stow"-target
+#
+simulate:
+	stow -v -n -t ${HOME} -R . --ignore=Makefile
 
 ###############################################################################
 # Run stow for the current directory, ignoring Makefile and stow-related files
