@@ -16,7 +16,7 @@ endif
 # Cleanup
 #
 clean uninstall:
-	stow -v -t ${HOME} -D .
+	stow -v --dotfiles -t ${HOME} -D .
 
 ###############################################################################
 # Help
@@ -60,11 +60,10 @@ endif
 # Simulate stow command from "stow"-target
 #
 simulate:
-	stow -v -n -t ${HOME} -R . --ignore=Makefile
+	stow -v -n --dotfiles -t ${HOME} -R . --ignore=Makefile
 
 ###############################################################################
 # Run stow for the current directory, ignoring Makefile and stow-related files
 #
 stow:
-	stow -v -t ${HOME} -R . --ignore=Makefile
-
+	stow -v --dotfiles -t ${HOME} -R . --ignore=Makefile
