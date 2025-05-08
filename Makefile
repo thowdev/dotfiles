@@ -1,7 +1,18 @@
-.PHONY: clean install install-stow simulate stow help uninstall
+.PHONY: clean debug install install-stow simulate stow help uninstall
 
 .DEFAULT_GOAL := help
 
+###############################################################################
+# Variables
+#
+ROOT_DIR		:= $(shell cd -P $(dir $(lastword $(MAKEFILE_LIST))) && pwd)
+CONFIG_DIR		:= $(ROOT_DIR)/dot-config
+THOWDEV_DIR		:= $(ROOT_DIR)/dot-thowdev
+
+debug:
+	@echo "$(ROOT_DIR)"
+	@echo "$(CONFIG_DIR)"
+	@echo "$(THOWDEV_DIR)"
 ###############################################################################
 # Detect OS
 #
