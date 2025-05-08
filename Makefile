@@ -2,7 +2,7 @@
 # Targets
 #
 #
-.PHONY: clean debug install install-stow simulate stow help uninstall
+.PHONY: clean clean_all debug debug-main install install-stow simulate stow help
 .DEFAULT_GOAL := help
 
 ################################################################################
@@ -13,11 +13,21 @@ ROOT_DIR		:= $(shell cd -P $(dir $(lastword $(MAKEFILE_LIST))) && pwd)
 DOT_CONFIG_DIR	:= $(ROOT_DIR)/dot-config
 DOT_THOWDEV_DIR	:= $(ROOT_DIR)/dot-thowdev
 
-debug:
+debug-main:
+	@echo "Makefile variables:"
+	@echo "+++++++++++++++++++"
 	@echo "ROOT_DIR: $(ROOT_DIR)"
 	@echo "DOT_CONFIG_DIR: $(DOT_CONFIG_PKG)"
 	@echo "DOT_THOWDEV_DIR: $(DOT_THOWDEV_PKG)"
 	@echo "HOME: $(HOME)"
+
+debug: debug-main debug-vim
+
+################################################################################
+# Includes
+#
+#
+include vimconfig.mak
 
 ################################################################################
 # Detect OS
@@ -34,7 +44,10 @@ endif
 # Cleanup
 #
 #
-clean uninstall:
+clean: clean_vim
+	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -D .
+
+clean_all: clean_all_vim
 	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -D .
 
 ################################################################################
