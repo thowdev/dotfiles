@@ -17,8 +17,8 @@ debug-main:
 	@echo "Makefile variables:"
 	@echo "+++++++++++++++++++"
 	@echo "ROOT_DIR: $(ROOT_DIR)"
-	@echo "DOT_CONFIG_DIR: $(DOT_CONFIG_PKG)"
-	@echo "DOT_THOWDEV_DIR: $(DOT_THOWDEV_PKG)"
+	@echo "DOT_CONFIG_DIR: $(DOT_CONFIG_DIR)"
+	@echo "DOT_THOWDEV_DIR: $(DOT_THOWDEV_DIR)"
 	@echo "HOME: $(HOME)"
 
 debug: debug-main debug-vim
@@ -63,7 +63,7 @@ help:
 	@echo "  install		Install GNU stow using the system package manager"
 	@echo "  install-stow		see \"install\"-target"
 	@echo "  stow			Stow all files to ${HOME}"
-	@echo "  simulate		Simulate stow command from "stow"-target
+	@echo "  simulate		Simulate stow command from "stow"-target"
 	@echo "  uninstall		see \"clean\"-target"
 	@echo ""
 	@echo "Detected OS: $(OS)"
