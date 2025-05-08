@@ -1,20 +1,27 @@
+################################################################################
+# Targets
+#
+#
 .PHONY: clean debug install install-stow simulate stow help uninstall
-
 .DEFAULT_GOAL := help
 
-###############################################################################
+################################################################################
 # Variables
 #
+#
 ROOT_DIR		:= $(shell cd -P $(dir $(lastword $(MAKEFILE_LIST))) && pwd)
-CONFIG_DIR		:= $(ROOT_DIR)/dot-config
-THOWDEV_DIR		:= $(ROOT_DIR)/dot-thowdev
+DOT_CONFIG_DIR	:= $(ROOT_DIR)/dot-config
+DOT_THOWDEV_DIR	:= $(ROOT_DIR)/dot-thowdev
 
 debug:
-	@echo "$(ROOT_DIR)"
-	@echo "$(CONFIG_DIR)"
-	@echo "$(THOWDEV_DIR)"
-###############################################################################
+	@echo "ROOT_DIR: $(ROOT_DIR)"
+	@echo "DOT_CONFIG_DIR: $(DOT_CONFIG_PKG)"
+	@echo "DOT_THOWDEV_DIR: $(DOT_THOWDEV_PKG)"
+	@echo "HOME: $(HOME)"
+
+################################################################################
 # Detect OS
+#
 #
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
@@ -23,14 +30,16 @@ else
 	OS := $(shell cat /etc/os-release | grep ^ID= | cut -d= -f2 | tr -d '"')
 endif
 
-###############################################################################
+################################################################################
 # Cleanup
 #
+#
 clean uninstall:
-	stow -v --dotfiles -t ${HOME} -D .
+	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -D .
 
-###############################################################################
+################################################################################
 # Help
+#
 #
 help:
 	@echo "Usage: make [target]"
@@ -46,7 +55,7 @@ help:
 	@echo ""
 	@echo "Detected OS: $(OS)"
 
-###############################################################################
+################################################################################
 # Install GNU stow with OS specific install manager
 #
 install install-stow:
@@ -71,10 +80,10 @@ endif
 # Simulate stow command from "stow"-target
 #
 simulate:
-	stow -v -n --dotfiles -t ${HOME} -R .
+	stow -v -n --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -R .
 
 ###############################################################################
 # Run stow for the current directory
 #
 stow:
-	stow -v --dotfiles -t ${HOME} -R .
+	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -R .
