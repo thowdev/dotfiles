@@ -40,7 +40,7 @@ help:
 	@echo "  clean			Unstow all files from ${HOME}"
 	@echo "  install		Install GNU stow using the system package manager"
 	@echo "  install-stow		see \"install\"-target"
-	@echo "  stow			Stow all files to ${HOME}, ignoring Makefile and stow-related files"
+	@echo "  stow			Stow all files to ${HOME}"
 	@echo "  simulate		Simulate stow command from "stow"-target
 	@echo "  uninstall		see \"clean\"-target"
 	@echo ""
@@ -71,10 +71,10 @@ endif
 # Simulate stow command from "stow"-target
 #
 simulate:
-	stow -v -n --dotfiles -t ${HOME} -R . --ignore=Makefile
+	stow -v -n --dotfiles -t ${HOME} -R .
 
 ###############################################################################
-# Run stow for the current directory, ignoring Makefile and stow-related files
+# Run stow for the current directory
 #
 stow:
-	stow -v --dotfiles -t ${HOME} -R . --ignore=Makefile
+	stow -v --dotfiles -t ${HOME} -R .
