@@ -17,15 +17,12 @@ let vimdir_undo     = vimdir . "/undo"
 " Prerequisites and scaffolding
 "
 """"""""""""""""""""""""""""""""""""""""
-" Install vim-plug
-if empty(glob('~/.config/vim/autoload/plug.vim'))
-  echom "Download plug.vim from https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-  silent !curl -sfLo ~/.config/vim/autoload/plug.vim --create-dirs
-     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-endif
-""""""""""""""""""""""""""""""""""""""""
 " Scaffolding
+if !isdirectory(vimdir_autoload)
+  echom "Create " . vimdir_autoload . " folder"
+  call mkdir(vimdir_autoload, "p")
+endif
+
 if !isdirectory(vimdir_backup)
   echom "Create " . vimdir_backup . " folder"
   call mkdir(vimdir_backup, "p")
@@ -44,6 +41,15 @@ endif
 if !isdirectory(vimdir_undo)
   echom "Create " . vimdir_undo . "folder"
   call mkdir(vimdir_undo, "p")
+endif
+
+""""""""""""""""""""""""""""""""""""""""
+" Install vim-plug
+if empty(glob(vimdir_autoload . '/plug.vim'))
+  echom "Download plug.vim from https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+  silent !curl -sfLo ~/.config/vim/autoload/plug.vim --create-dirs
+     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
