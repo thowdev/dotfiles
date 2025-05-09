@@ -3,7 +3,7 @@
 # Targets
 #
 #
-.PHONY: back_vim clean_vim clean_all_vim debug-vim
+.PHONY: backup_vim clean_vim clean_all_vim debug-vim
 
 ################################################################################
 # Variables
@@ -15,16 +15,11 @@ VIM_DATA_DIR		:= $(XDG_DATA_HOME)/vim
 VIM_AUTOLOAD_DIR	:= $(VIM_CONFIG_DIR)/autoload
 VIM_SEARCH_DIRS		:= $(XDG_SEARCH_DIRS) $(VIM_CONFIG_DIR)
 
-debug-vim:
-	@echo "################################################################################"
-	@echo "# vimconfig.mak variables:"
-	@echo "# ======================================="
-	@echo "#   VIM_CACHE_DIR:	$(VIM_CACHE_DIR)"
-	@echo "#   VIM_CONFIG_DIR:	$(VIM_CONFIG_DIR)"
-	@echo "#   VIM_DATA_DIR:	$(VIM_DATA_DIR)"
-
 ################################################################################
-back_vim:
+# Backup all vim related caches, configs and data
+#
+#
+backup_vim:
 	@echo "Backup \"$(VIM_CACHE_DIR)\""
 	@if [ -d "$(VIM_CACHE_DIR)" ]; then \
 		mv $(VIM_CACHE_DIR) $(VIM_CACHE_DIR)-$(TODAY); \
@@ -39,6 +34,9 @@ back_vim:
 	fi
 
 ################################################################################
+# Delete all vim related caches, configs and data INcluding their backups
+#
+#
 clean_all_vim: clean_vim
 	@echo "Searching and deleting old vim-* and autoload-* dirs in $(VIM_SEARCH_DIRS)"
 	@for dir in $(VIM_SEARCH_DIRS); do \
@@ -49,7 +47,10 @@ clean_all_vim: clean_vim
 	done
 
 ################################################################################
-clean_vim: back_vim
+# Delete all vim related caches, configs and data EXcluding their backups
+#
+#
+clean_vim: backup_vim
 	@echo "Delete \"$(VIM_CACHE_DIR)\""
 	@rm -rf $(VIM_CACHE_DIR)
 	@echo "Delete \"$(VIM_AUTOLOAD_DIR)\""

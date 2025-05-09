@@ -1,7 +1,2 @@
 .DS_Store
 dot-config/vim/autoload
-dot-config/vim/backup
-dot-config/vim/plugged
-dot-config/vim/tmp
-dot-config/vim/undo
-dot-config/vim/vimbackup
