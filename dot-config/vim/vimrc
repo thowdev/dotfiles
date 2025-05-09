@@ -4,59 +4,85 @@
 "	:help <options>
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Variables
+" Define XDG-style config, data, and cache paths
 "
-let vimdir = expand('~/.config/vim')
-let vimdir_autoload = vimdir . "/autoload"
-let vimdir_backup   = vimdir . "/backup"
-let vimdir_plugged  = vimdir . "/plugged"
-let vimdir_tmp      = vimdir . "/tmp"
-let vimdir_undo     = vimdir . "/undo"
+" s: ensures that these variables are only available within the script or section where you define them. This is a good practice for organizing larger Vim configurations.
+"
+if exists('*stdpath')
+  let s:vim_config = stdpath('config') . '/vim'	" Configuration files (e.g., vimrc)
+  let s:vim_data   = stdpath('data')   . '/vim' " Plugins and shared data
+  let s:vim_cache  = stdpath('cache')  . '/vim' " Temporary files (e.g., backup, swap, undo)
+else
+  let s:vim_config = expand('~/.config/vim')
+  let s:vim_data   = expand('~/.local/share/vim')
+  let s:vim_cache  = expand('~/.cache/vim')
+endif
 
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Prerequisites and scaffolding
-"
-""""""""""""""""""""""""""""""""""""""""
+" Create specific directories for each type of data
+let s:vim_autoload_dir = s:vim_config . '/autoload'     " Autoload (e.g., plug.vim, custom functions)
+let s:vim_backup_dir   = s:vim_cache  . '/backup'       " Backup files
+let s:vim_plugged_dir  = s:vim_data   . '/plugged'      " Installed plugins (vim-plug)
+let s:vim_swap_dir     = s:vim_cache  . '/swap'         " Swap files
+let s:vim_undo_dir     = s:vim_cache  . '/undo'         " Undo history
+
 " Scaffolding
-if !isdirectory(vimdir_autoload)
-  echom "Create " . vimdir_autoload . " folder"
-  call mkdir(vimdir_autoload, "p")
+if !isdirectory(s:vim_autoload_dir)
+  echom "Create " . s:vim_autoload_dir
+  call mkdir(s:vim_autoload_dir, "p")
 endif
 
-if !isdirectory(vimdir_backup)
-  echom "Create " . vimdir_backup . " folder"
-  call mkdir(vimdir_backup, "p")
+if !isdirectory(s:vim_backup_dir)
+  echom "Create " . s:vim_backup_dir
+  call mkdir(s:vim_backup_dir, "p")
 endif
 
-if !isdirectory(vimdir_plugged)
-  echom "Create " . vimdir_plugged . " folder"
-  call mkdir(vimdir_plugged, "p")
+if !isdirectory(s:vim_plugged_dir)
+  echom "Create " . s:vim_plugged_dir
+  call mkdir(s:vim_plugged_dir, "p")
 endif
 
-if !isdirectory(vimdir_tmp)
-  echom "Create " . vimdir_tmp . " folder"
-  call mkdir(vimdir_tmp, "p")
+if !isdirectory(s:vim_swap_dir)
+  echom "Create " . s:vim_swap_dir
+  call mkdir(s:vim_swap_dir, "p")
 endif
 
-if !isdirectory(vimdir_undo)
-  echom "Create " . vimdir_undo . "folder"
-  call mkdir(vimdir_undo, "p")
+if !isdirectory(s:vim_undo_dir)
+  echom "Create " . s:vim_undo_dir
+  call mkdir(s:vim_undo_dir, "p")
 endif
 
-""""""""""""""""""""""""""""""""""""""""
 " Install vim-plug
-if empty(glob(vimdir_autoload . '/plug.vim'))
+if empty(glob(s:vim_autoload_dir . '/plug.vim'))
   echom "Download plug.vim from https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-  silent !curl -sfLo ~/.config/vim/autoload/plug.vim --create-dirs
-     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+  silent execute
+      \ '!curl -sfLo ' .
+      \ shellescape(s:vim_autoload_dir . '/plug.vim') . ' ' .
+      \ '--create-dirs ' .
+      \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+" Set swap, backup, undo directories
+" // absolute path of backup and swap files (separated by % signs)
+"
+set swapfile
+execute 'set directory^=' . fnameescape(s:vim_swap_dir) . '//'
+execute 'set backupdir^=' . fnameescape(s:vim_backup_dir) . '//'
+if has('persistent_undo')
+  execute 'set undodir^=' . fnameescape(s:vim_undo_dir) . '//'
+  set undofile
+endif
+
+" Autoload directory (functions like plug#begin() or custom functions)
+execute 'set runtimepath+=' . fnameescape(s:vim_autoload_dir)
+
+" Set plugin-related directories (for plugin managers like vim-plug)
+execute 'set runtimepath+=' . fnameescape(s:vim_plugged_dir)
 
 " ==============================================================================
 " Start vim-plug
 "
-call plug#begin(vimdir_plugged)
+call plug#begin(s:vim_plugged_dir)
 Plug 'https://github.com/morhetz/gruvbox'
 Plug 'https://github.com/jiangmiao/auto-pairs'
 Plug 'https://github.com/ntpeters/vim-better-whitespace'
@@ -74,6 +100,8 @@ call plug#end()
 "set term=screen-256color
 "set term=xterm-256color
 set t_Co=256
+
+let g:netrw_home = s:vim_data . '/vim/netrw'
 
 " ==============================================================================
 " Turn on syntax highlighting and set theme
@@ -132,15 +160,6 @@ let g:indentLine_char = '|'
 " ==============================================================================
 " Backup and tmp dirs
 set backup
-" // absolute path of backup and swap files (separated by % signs)
-execute 'set backupdir=' . vimdir_backup . '//'
-let &backupdir = vimdir_backup . '//'
-let &directory = vimdir_tmp . '//'
-
-if has('persistent_undo')
-    set undofile
-    let &undodir = vimdir_undo . '//'
-endif
 
 " ==============================================================================
 " Don't wrap lines at all

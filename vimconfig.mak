@@ -3,50 +3,57 @@
 # Targets
 #
 #
-.PHONY: clean_vim clean_all_vim debug-vim
-.DEFAULT_GOAL := help
+.PHONY: back_vim clean_vim clean_all_vim debug-vim
 
 ################################################################################
 # Variables
 #
 #
-VIM_CONFIG_DIR  := $(DOT_CONFIG_DIR)/vim
-VIM_BACKUP_DIR  := $(VIM_CONFIG_DIR)/backup
-VIM_UNDO_DIR  := $(VIM_CONFIG_DIR)/undo
-VIM_VIMBACKUP_DIR  := $(VIM_CONFIG_DIR)/vimbackup
+VIM_CACHE_DIR		:= $(XDG_CACHE_HOME)/vim
+VIM_CONFIG_DIR		:= $(XDG_CONFIG_HOME)/vim
+VIM_DATA_DIR		:= $(XDG_DATA_HOME)/vim
+VIM_AUTOLOAD_DIR	:= $(VIM_CONFIG_DIR)/autoload
+VIM_SEARCH_DIRS		:= $(XDG_SEARCH_DIRS) $(VIM_CONFIG_DIR)
 
 debug-vim:
 	@echo "vimconfig.mak variables:"
 	@echo "++++++++++++++++++++++++"
+	@echo "VIM_CACHE_DIR: $(VIM_CACHE_DIR)"
 	@echo "VIM_CONFIG_DIR: $(VIM_CONFIG_DIR)"
-	@echo "VIM_BACKUP_DIR: $(VIM_BACKUP_DIR)"
-	@echo "VIM_UNDO_DIR: $(VIM_UNDO_DIR)"
-	@echo "VIM_VIMBACKUP_DIR: $(VIM_VIMBACKUP_DIR)"
+	@echo "VIM_DATA_DIR: $(VIM_DATA_DIR)"
+	@echo ""
 
 
-clean_all_vim: clean_vim
-	@echo "Delete \"$(VIM_VIMBACKUP_DIR)\""
-	@rm -rf $(VIM_VIMBACKUP_DIR)
-
-clean_vim:
-	@echo "Cleanup \"$(VIM_CONFIG_DIR)\" folder"
-	@echo "  1. Create \"$(VIM_VIMBACKUP_DIR)\""
-	@mkdir -p $(VIM_VIMBACKUP_DIR)
-
-	@echo "  2. Create backups of \"$(VIM_BACKUP_DIR)\" & \"$(VIM_UNDO_DIR)\""
-	@TODAY=$(shell date +%Y%m%d_%H%M%S) && \
-	if [ -d "$(VIM_BACKUP_DIR)" ]; then \
-		mv $(VIM_BACKUP_DIR) $(VIM_VIMBACKUP_DIR)/$$TODAY-backup; \
-	fi && \
-	if [ -d "$(VIM_UNDO_DIR)" ]; then \
-		mv $(VIM_UNDO_DIR) $(VIM_VIMBACKUP_DIR)/$$TODAY-undo; \
+################################################################################
+back_vim:
+	@echo "Backup \"$(VIM_CACHE_DIR)\""
+	@if [ -d "$(VIM_CACHE_DIR)" ]; then \
+		mv $(VIM_CACHE_DIR) $(VIM_CACHE_DIR)-$(TODAY); \
+	fi
+	@echo "Backup \"$(VIM_AUTOLOAD_DIR)\""
+	@if [ -d "$(VIM_AUTOLOAD_DIR)" ]; then \
+		mv $(VIM_AUTOLOAD_DIR) $(VIM_AUTOLOAD_DIR)-$(TODAY); \
+	fi
+	@echo "Backup \"$(VIM_DATA_DIR)\""
+	@if [ -d "$(VIM_DATA_DIR)" ]; then \
+		mv $(VIM_DATA_DIR) $(VIM_DATA_DIR)-$(TODAY); \
 	fi
 
-	@echo "  3. Delete all subfolders except \"ftplugin\" & \"vimbackup\""
-	@find $(VIM_CONFIG_DIR) \
-		-mindepth 1 \
-		-maxdepth 1 \
-		-type d \
-		! -name ftplugin \
-		! -name vimbackup \
-		-exec rm -rf {} +
+################################################################################
+clean_all_vim: clean_vim
+	@echo "Searching and deleting old vim-* and autoload-* dirs in $(VIM_SEARCH_DIRS)"
+	@for dir in $(VIM_SEARCH_DIRS); do \
+		find -L $$dir -maxdepth 1 -type d \
+			\( -name 'vim-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]' \
+			-o -name 'autoload-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]_[0-9][0-9][0-9][0-9][0-9][0-9]' \) \
+			-print -exec rm -rf {} \;; \
+	done
+
+################################################################################
+clean_vim: back_vim
+	@echo "Delete \"$(VIM_CACHE_DIR)\""
+	@rm -rf $(VIM_CACHE_DIR)
+	@echo "Delete \"$(VIM_AUTOLOAD_DIR)\""
+	@rm -rf "$(VIM_AUTOLOAD_DIR)"
+	@echo "Delete \"$(VIM_DATA_DIR)\""
+	@rm -rf $(VIM_DATA_DIR)

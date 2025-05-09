@@ -2,7 +2,7 @@
 # Targets
 #
 #
-.PHONY: clean clean_all debug debug-main install install-stow simulate stow help
+.PHONY: clean debug install install-stow reset simulate stow unstow help
 .DEFAULT_GOAL := help
 
 ################################################################################
@@ -12,20 +12,27 @@
 ROOT_DIR		:= $(shell cd -P $(dir $(lastword $(MAKEFILE_LIST))) && pwd)
 DOT_CONFIG_DIR	:= $(ROOT_DIR)/dot-config
 DOT_THOWDEV_DIR	:= $(ROOT_DIR)/dot-thowdev
+TODAY=$(shell date +%Y%m%d_%H%M%S)
+XDG_CACHE_HOME	?= $(HOME)/.cache
+XDG_CONFIG_HOME ?= $(HOME)/.config
+XDG_DATA_HOME	?= $(HOME)/.local/share
+XDG_SEARCH_DIRS	:= $(XDG_CACHE_HOME) $(XDG_CONFIG_HOME) $(XDG_DATA_HOME)
 
-debug-main:
+debug: debug-vim
 	@echo "Makefile variables:"
 	@echo "+++++++++++++++++++"
 	@echo "ROOT_DIR: $(ROOT_DIR)"
 	@echo "DOT_CONFIG_DIR: $(DOT_CONFIG_DIR)"
 	@echo "DOT_THOWDEV_DIR: $(DOT_THOWDEV_DIR)"
+	@echo "TODAY: $(TODAY)"
 	@echo "HOME: $(HOME)"
-
-debug: debug-main debug-vim
+	@echo "XDG_CACHE_HOME: $(XDG_CACHE_HOME)"
+	@echo "XDG_CONFIG_HOME: $(XDG_CONFIG_HOME)"
+	@echo "XDG_DATA_HOME: $(XDG_DATA_HOME)"
 
 ################################################################################
 # Includes
-#
+#   - Include after setting variables so that they can be used in other *.mak files
 #
 include vimconfig.mak
 
@@ -44,11 +51,13 @@ endif
 # Cleanup
 #
 #
-clean: clean_vim
+clean: clean_vim unstow
+
+reset: stow clean_all_vim unstow
+
+unstow:
 	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -D .
 
-clean_all: clean_all_vim
-	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -D .
 
 ################################################################################
 # Help
@@ -59,12 +68,12 @@ help:
 	@echo ""
 	@echo "Targets:"
 	@echo "  help			Show this help message"
-	@echo "  clean			Unstow all files from ${HOME}, but save vim's"
-	@echo "			undodir and backpdir"
-	@echo "  clean_all		Unstow all files from ${HOME}, and delete all vim"
-	@echo "			related files/folders"
+	@echo "  clean			Unstow all files from ${HOME}"
+	@echo "   				+ save vim's config, data and cache"
 	@echo "  install		Install GNU stow using the system package manager"
 	@echo "  install-stow		see \"install\"-target"
+	@echo "  reset			Unstow all files from ${HOME}"
+	@echo "  				+ delete all of vim's config, data and cache"
 	@echo "  stow			Stow all files to ${HOME}"
 	@echo "  simulate		Simulate stow command from "stow"-target"
 	@echo "  uninstall		see \"clean\"-target"
