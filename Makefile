@@ -2,7 +2,7 @@
 # Targets
 #
 #
-.PHONY: clean debug install install-stow reset simulate stow unstow help
+.PHONY: clean debug debug-main install install-stow reset simulate stow unstow help
 .DEFAULT_GOAL := help
 
 ################################################################################
@@ -18,17 +18,20 @@ XDG_CONFIG_HOME ?= $(HOME)/.config
 XDG_DATA_HOME	?= $(HOME)/.local/share
 XDG_SEARCH_DIRS	:= $(XDG_CACHE_HOME) $(XDG_CONFIG_HOME) $(XDG_DATA_HOME)
 
-debug: debug-vim
-	@echo "Makefile variables:"
-	@echo "+++++++++++++++++++"
-	@echo "ROOT_DIR: $(ROOT_DIR)"
-	@echo "DOT_CONFIG_DIR: $(DOT_CONFIG_DIR)"
-	@echo "DOT_THOWDEV_DIR: $(DOT_THOWDEV_DIR)"
-	@echo "TODAY: $(TODAY)"
-	@echo "HOME: $(HOME)"
-	@echo "XDG_CACHE_HOME: $(XDG_CACHE_HOME)"
-	@echo "XDG_CONFIG_HOME: $(XDG_CONFIG_HOME)"
-	@echo "XDG_DATA_HOME: $(XDG_DATA_HOME)"
+debug-main:
+	@echo "################################################################################"
+	@echo "# Makefile variables:"
+	@echo "# ======================================="
+	@echo "#   ROOT_DIR:		$(ROOT_DIR)"
+	@echo "#   DOT_CONFIG_DIR:	$(DOT_CONFIG_DIR)"
+	@echo "#   DOT_THOWDEV_DIR:	$(DOT_THOWDEV_DIR)"
+	@echo "#   TODAY:		$(TODAY)"
+	@echo "#   HOME:		$(HOME)"
+	@echo "#   XDG_CACHE_HOME:	$(XDG_CACHE_HOME)"
+	@echo "#   XDG_CONFIG_HOME:	$(XDG_CONFIG_HOME)"
+	@echo "#   XDG_DATA_HOME:	$(XDG_DATA_HOME)"
+
+debug: debug-main debug-vim
 
 ################################################################################
 # Includes
@@ -83,6 +86,7 @@ help:
 ################################################################################
 # Install GNU stow with OS specific install manager
 #
+#
 install install-stow:
 ifeq ($(OS), macos)
 	brew install stow
@@ -104,11 +108,13 @@ endif
 ###############################################################################
 # Simulate stow command from "stow"-target
 #
+#
 simulate:
 	stow -v -n --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -R .
 
 ###############################################################################
 # Run stow for the current directory
+#
 #
 stow:
 	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -R .

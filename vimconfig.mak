@@ -16,13 +16,12 @@ VIM_AUTOLOAD_DIR	:= $(VIM_CONFIG_DIR)/autoload
 VIM_SEARCH_DIRS		:= $(XDG_SEARCH_DIRS) $(VIM_CONFIG_DIR)
 
 debug-vim:
-	@echo "vimconfig.mak variables:"
-	@echo "++++++++++++++++++++++++"
-	@echo "VIM_CACHE_DIR: $(VIM_CACHE_DIR)"
-	@echo "VIM_CONFIG_DIR: $(VIM_CONFIG_DIR)"
-	@echo "VIM_DATA_DIR: $(VIM_DATA_DIR)"
-	@echo ""
-
+	@echo "################################################################################"
+	@echo "# vimconfig.mak variables:"
+	@echo "# ======================================="
+	@echo "#   VIM_CACHE_DIR:	$(VIM_CACHE_DIR)"
+	@echo "#   VIM_CONFIG_DIR:	$(VIM_CONFIG_DIR)"
+	@echo "#   VIM_DATA_DIR:	$(VIM_DATA_DIR)"
 
 ################################################################################
 back_vim:
