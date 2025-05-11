@@ -7,3 +7,5 @@
 \.DS_Store
 ^/Makefile
 ^/makefiles
+^/scripts
+^/templates
