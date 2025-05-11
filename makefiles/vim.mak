@@ -11,9 +11,10 @@
 #
 VIM_CACHE_DIR		:= $(XDG_CACHE_HOME)/vim
 VIM_CONFIG_DIR		:= $(XDG_CONFIG_HOME)/vim
+VIM_CONFIG_DIR_REAL	:= $(DOT_CONFIG_DIR)/vim
 VIM_DATA_DIR		:= $(XDG_DATA_HOME)/vim
 VIM_AUTOLOAD_DIR	:= $(VIM_CONFIG_DIR)/autoload
-VIM_SEARCH_DIRS		:= $(XDG_SEARCH_DIRS) $(VIM_CONFIG_DIR)
+VIM_SEARCH_DIRS		:= $(XDG_SEARCH_DIRS) $(VIM_CONFIG_DIR_REAL)
 
 ################################################################################
 # Backup all vim related caches, configs and data
