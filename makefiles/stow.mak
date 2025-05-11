@@ -2,13 +2,13 @@
 # Targets
 #
 #
-.PHONY: install install-stow
+.PHONY: install-stow
 
 ################################################################################
 # Install GNU stow with OS specific install manager
 #
 #
-install install-stow:
+install-stow:
 ifeq ($(OS), macos)
 	brew install stow
 else ifeq ($(OS), fedora)
