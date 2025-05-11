@@ -17,6 +17,15 @@ debug-makefile:
 	@printf "#   %-20s %s\n" "XDG_CONFIG_HOME:" "$(XDG_CONFIG_HOME)"
 	@printf "#   %-20s %s\n" "XDG_DATA_HOME:"   "$(XDG_DATA_HOME)"
 
+debug-python:
+	@echo "################################################################################"
+	@echo "# python.mak variables:"
+	@echo "# ======================================="
+	@printf "#   %-20s %s\n" "SYSTEM_PYTHON_PATH:"		"$(SYSTEM_PYTHON_PATH)"
+	@printf "#   %-20s %s\n" "SYSTEM_PYTHON_VERSION:"	"$(SYSTEM_PYTHON_VERSION)"
+	@printf "#   %-20s %s\n" "PYTHON_VERSION:"			"$(PYTHON_VERSION)"
+	@printf "#   %-20s %s\n" "DIR_VENV_PYTHON:"			"$(DIR_VENV_PYTHON)"
+
 debug-vim:
 	@echo "################################################################################"
 	@echo "# vimconfig.mak variables:"

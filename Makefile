@@ -22,13 +22,24 @@ XDG_SEARCH_DIRS	:= $(XDG_CACHE_HOME) $(XDG_CONFIG_HOME) $(XDG_DATA_HOME)
 
 ################################################################################
 # Includes
-#   - Include after setting variables so that they can be used in other *.mak files
+#   - Include after setting variables so that they can be used in other *.mak
+#     files
+#   - Be careful about include order, e.g.
+#       - "debug" must be at the end to display all variables from all *.mak
+#         files
+#       - "git" must be after "python" because of the j2 rendering which is done
+#         by python scripts
 #
 #
 # Install stow
 include makefiles/stow.mak
+
 # Manage vim config
 include makefiles/vim.mak
+
+# Manage python
+include makefiles/python.mak
+
 # Help output
 include makefiles/help.mak
 # Debug output
@@ -38,7 +49,7 @@ include makefiles/debug.mak
 # Cleanup
 #
 #
-clean: clean_vim unstow
+clean: clean-python clean_vim unstow
 
 reset: clean_all_vim unstow
 
