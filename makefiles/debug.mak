@@ -26,6 +26,12 @@ debug-python:
 	@printf "#   %-20s %s\n" "PYTHON_VERSION:"			"$(PYTHON_VERSION)"
 	@printf "#   %-20s %s\n" "DIR_VENV_PYTHON:"			"$(DIR_VENV_PYTHON)"
 
+debug-stow:
+	@echo "################################################################################"
+	@echo "# stow.mak variables:"
+	@echo "# ======================================="
+	@printf "#   %-20s %s\n" "OS:"	"$(OS)"
+
 debug-vim:
 	@echo "################################################################################"
 	@echo "# vimconfig.mak variables:"
@@ -37,5 +43,5 @@ debug-vim:
 	@printf "#   %-20s %s\n" "VIM_AUTOLOAD_DIR:"    "$(VIM_AUTOLOAD_DIR)"
 	@printf "#   %-20s %s\n" "VIM_SEARCH_DIRS:"     "$(VIM_SEARCH_DIRS)"
 
-debug: debug-makefile debug-vim
+debug: debug-makefile debug-python debug-stow debug-vim
 

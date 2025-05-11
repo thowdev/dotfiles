@@ -33,13 +33,13 @@ clean-python:
 	@rm -rf $(DIR_VENV_PYTHON)
 
 help-python:
-	@echo "# ______________________________________________________________________________"
-	@echo "# Specific python targets:"
-	@echo "# ------------------------"
-	@echo "# > activate-python - show activation instruction for virtual python"
-	@echo "#                     environments"
-	@echo "# > clean-python    - cleanup python virt. environment"
-	@echo "# > help-python     - this target list (python targets)"
+	@echo "# ========================================"
+	@echo "# Python targets:"
+	@printf "#  %-17s %s\n" "activate-python:"	"See \"python\" target"
+	@printf "#  %-17s %s\n" "clean-python:"		"Delete virtual python environment"
+	@printf "#  %-17s %s\n" "install-python:"	"See \"python\" target"
+	@printf "#  %-17s %s\n" "python:"	        "Show activation instruction for virtual python environments"
+	@printf "#  %-17s %s\n" "help-python:"		"Show this target list (python targets)"
 
 install-python python: activate-python
 

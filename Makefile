@@ -2,7 +2,7 @@
 # Targets
 #
 #
-.PHONY: clean reset simulate stow unstow
+.PHONY: clean install reset simulate stow unstow
 .DEFAULT_GOAL := help
 
 ################################################################################
@@ -49,11 +49,12 @@ include makefiles/debug.mak
 # Cleanup
 #
 #
-clean: clean-python clean_vim unstow
+clean: clean-python clean-vim unstow
 
-reset: clean_all_vim unstow
+reset: clean-python clean-all-vim unstow
 
 unstow:
+	@echo "################################################################################"
 	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -D .
 
 ###############################################################################
@@ -61,11 +62,13 @@ unstow:
 #
 #
 simulate:
+	@echo "################################################################################"
 	stow -v -n --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -R .
 
 ###############################################################################
 # Run stow for the current directory
 #
 #
-stow:
+install stow:
+	@echo "################################################################################"
 	stow -v --dir=$(ROOT_DIR) --dotfiles -t $(HOME) -R .

@@ -2,7 +2,7 @@
 # Targets
 #
 #
-.PHONY: help
+.PHONY: help help-main
 
 ################################################################################
 # Detect OS
@@ -19,19 +19,18 @@ endif
 # Help
 #
 #
-help:
-	@echo "Usage: make [target]"
-	@echo ""
-	@echo "Targets:"
-	@echo "  help			Show this help message (default)"
-	@echo "  clean			Unstow all files from ${HOME}"
-	@echo "   				+ save vim's config, data and cache"
-	@echo "  install		Install GNU stow using the system package manager"
-	@echo "  install-stow		see \"install\"-target"
-	@echo "  reset			Unstow all files from ${HOME}"
-	@echo "  				+ delete all of vim's config, data and cache"
-	@echo "  stow			Stow all files to ${HOME}"
-	@echo "  simulate		Simulate stow command from "stow"-target"
-	@echo ""
-	@echo "Detected OS: $(OS)"
+help-main:
+	@echo "################################################################################"
+	@echo "# Usage: make [target]"
+	@echo "# Detected OS: $(OS)"
+	@echo "# ========================================"
+	@echo "# Main targets: "
+	@printf "#  %-15s %s\n" "help:" 		"Show this help message"
+	@printf "#  %-15s %s\n" "clean:" 		"Unstow all files from ${HOME}"
+	@printf "#  %-15s %s\n" "      " 		"  + save vim's config, data and cache"
+	@printf "#  %-15s %s\n" "reset"			"Unstow all files from ${HOME}"
+	@printf "#  %-15s %s\n" "     " 		"  + delete all of vim's config, data and cache"
+	@printf "#  %-15s %s\n" "simulate"		"Simulate stow command from \"stow\"-target"
+	@printf "#  %-15s %s\n" "stow"			"Stow all files to ${HOME}"
 
+help: help-main help-python help-stow
