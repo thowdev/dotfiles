@@ -1,2 +1,19 @@
 .DS_Store
+
+# Vim backup/swap/undo files and autoload folders (all directories)
 dot-config/vim/autoload*/
+
+*~              # All files ending in ~ in any subdirectory
+**/*~           # All files ending in ~ in any subdirectory
+
+.*.un~          # Undo files
+**/.*.un~       # Undo files
+
+*.un~           # Undo files
+**/*.un~        # Undo files
+
+**/*.sw[pon]     # All swap files (.swp, .swo, .swn)
+
+*.bak            # Backup files
+*.tmp            # Temp files
+
