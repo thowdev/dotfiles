@@ -1,0 +1,97 @@
+name: ChezMoi Bootstrap Validation
+
+on:
+  push:
+    branches: [devel, main, tmp]
+  pull_request:
+    branches: [devel, main]
+  workflow_dispatch:
+
+jobs:
+  linux-matrix-test:
+    strategy:
+      matrix:
+        include:
+          - name: Ubuntu 24.04
+            image: ubuntu:24.04
+          - name: Fedora 42
+            image: fedora:42
+          - name: openSUSE Leap 15.6
+            image: opensuse/leap:15.6
+          - name: UBI 8.10
+            image: registry.access.redhat.com/ubi8/ubi:8.10
+          - name: UBI 9.6
+            image: registry.access.redhat.com/ubi9/ubi:9.6
+          - name: UBI 10.0
+            image: registry.access.redhat.com/ubi10/ubi:10.0
+
+    name: "Test on: ${{ matrix.name }}"
+    runs-on: ubuntu-24.04
+    container: ${{ matrix.image }}
+
+    steps:
+      - name: "Step 1: Ensure curl | gzip | tar is installed"
+        shell: bash
+        run: |
+          if ! command -v curl &>/dev/null; then
+            if command -v zypper &>/dev/null; then
+              zypper --non-interactive install curl
+            elif command -v dnf &>/dev/null; then
+              dnf install -y --allowerasing curl
+            elif command -v apt-get &>/dev/null; then
+              apt-get update && apt-get install -y curl
+            else
+              echo "Unknown package manager" >&2
+              exit 1
+            fi
+          fi
+          if ! command -v gzip &>/dev/null; then
+            if command -v zypper &>/dev/null; then
+              zypper --non-interactive install gzip
+            elif command -v dnf &>/dev/null; then
+              dnf install -y --allowerasing gzip
+            elif command -v apt-get &>/dev/null; then
+              apt-get update && apt-get install -y gzip
+            else
+              echo "Unknown package manager" >&2
+              exit 1
+            fi
+          fi
+          if ! command -v tar &>/dev/null; then
+            if command -v zypper &>/dev/null; then
+              zypper --non-interactive install tar
+            elif command -v dnf &>/dev/null; then
+              dnf install -y --allowerasing tar
+            elif command -v apt-get &>/dev/null; then
+              apt-get update && apt-get install -y tar
+            else
+              echo "Unknown package manager" >&2
+              exit 1
+            fi
+          fi
+
+      - name: "Step 2: Checkout repo ${{ github.repository }}/${{ github.ref_name }}"
+        uses: actions/checkout@v4
+
+      - name: "Step 3: Execute bootstrap script"
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/bootstrap.sh | bash
+
+      - name: "Step 4: Run post-bootstrap validation tests"
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/0-bootstrap-test.sh | BST_SCRIPT_NAME="0-bootstrap-test.sh" bash
+
+  macos-arm:
+    name: "Test on: macOS 15 ARM"
+    runs-on: macos-15
+    steps:
+      - name: "Step 1: Execute bootstrap script"
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/bootstrap.sh | bash
+
+      - name: "Step 2: Checkout repo ${{ github.repository }}/${{ github.ref_name }}"
+        uses: actions/checkout@v4
+
+      - name: "Step 3: Run post-bootstrap validation tests"
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/0-bootstrap-test.sh | BST_SCRIPT_NAME="0-bootstrap-test.sh" bash
