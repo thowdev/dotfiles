@@ -77,18 +77,15 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 
 ################################################################################
-# === Bootstrap functions ===
+# === Preparation functions ===
 #
 #
-
 # ------------------------------------------------------------------------------
 # Prepare MacOS
 #
 prepare_macos() {
-    printf "################################################################################"
-    printf "# %-20s : %s\n" "Operating System" "${OSTYPE}"
-    printf "# %-20s : %s\n" "Operating System" "${OS}"
-    printf "# %-20s : %s\n" "Arch" "${ARCH}"
+    printf "################################################################################\n"
+    printf "# %-20s : %s\n" "Operating System" "${OSTYPE} / ${OS} (${ARCH})"
 
     if [[ "$OSTYPE" == "darwin"* ]] && ! xcode-select -p &>/dev/null; then
         printf "# %-50s \n" "  - Installing Xcode Command Line Tools ..."
@@ -106,7 +103,8 @@ prepare_macos() {
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    brew install bash curl make
+    printf "# %-50s \n" "  - brew install -q bash curl make ..."
+    brew install -q bash curl make
 }
 
 # ------------------------------------------------------------------------------
