@@ -1,7 +1,11 @@
 name: CI Bootstrap Test
 
 on:
-  workflow_dispatch
+  push:
+    branches: [tmp]
+  pull_request:
+    branches: [tmp]
+  workflow_dispatch:
 
 jobs:
   linux-distros:

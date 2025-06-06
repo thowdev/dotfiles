@@ -63,9 +63,10 @@ CHEZMOI_FILE="chezmoi_${CHEZMOI_VERSION}"
 CHEZMOI_URL="https://github.com/twpayne/chezmoi/releases/download/v${CHEZMOI_VERSION}"
 CHEZMOI_INSTALL_URL="get.chezmoi.io"
 
+GIT_REPONAME="thowdev"
+
 HLB_PATH="${HOME}/.local/bin"
 export PATH="${HLB_PATH}:$PATH"
-
 
 ################################################################################
 # === XDG Base Directory Setup ===
@@ -81,6 +82,26 @@ export XDG_CACHE_HOME="$HOME/.cache"
 #
 
 # ------------------------------------------------------------------------------
+#
+ensure_curl_installed() {
+  if ! command -v curl &>/dev/null; then
+    echo "################################################################################"
+    echo "# Installing curl ..."
+    if command -v apt-get &>/dev/null; then
+      $SUDO apt-get update && $SUDO apt-get install -y curl
+    elif command -v dnf &>/dev/null; then
+      $SUDO dnf install -y --allowerasing curl
+    elif command -v zypper &>/dev/null; then
+      $SUDO zypper install -y curl
+    else
+      echo "No supported package manager to install curl." >&2
+      exit 1
+    fi
+  fi
+}
+
+# ------------------------------------------------------------------------------
+#
 ensure_gzip_installed() {
   if ! command -v gzip &>/dev/null; then
     echo "################################################################################"
@@ -99,6 +120,7 @@ ensure_gzip_installed() {
 }
 
 # ------------------------------------------------------------------------------
+#
 ensure_tar_installed() {
   if ! command -v tar &>/dev/null; then
     echo "################################################################################"
@@ -172,7 +194,7 @@ install_make() {
 init_dotfiles() {
     echo "################################################################################"
     echo "# Initializing chezmoi ..."
-    chezmoi init --apply thowdev
+    chezmoi init --apply ${GIT_REPONAME}
 }
 
 # ------------------------------------------------------------------------------
@@ -184,19 +206,25 @@ run_make_setup() {
     make -C "$XDG_DATA_HOME/chezmoi" --silent || true
 }
 
-ensure_prereqs() {
-  set_sudo_prefix
-  ensure_gzip_installed
-  ensure_tar_installed
-  install_brew
-  install_make
-}
 
+################################################################################
+# === Main ===
+#
+#
 # ------------------------------------------------------------------------------
 # Ordered installation/setup steps (order is important):
 #
-ensure_prereqs
+set_sudo_prefix
+
+ensure_curl_installed
+ensure_gzip_installed
+ensure_tar_installed
+
+install_brew
+install_make
+
 install_chezmoi
+
 init_dotfiles
 run_make_setup
 
