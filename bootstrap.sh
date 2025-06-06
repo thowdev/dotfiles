@@ -106,7 +106,7 @@ prepare_macos() {
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    brew install bash curl make tar
+    brew install bash curl make
 }
 
 # ------------------------------------------------------------------------------
@@ -259,7 +259,6 @@ set_sudo_prefix
 
 prepare_system
 
-install_brew
 install_make
 
 install_chezmoi
