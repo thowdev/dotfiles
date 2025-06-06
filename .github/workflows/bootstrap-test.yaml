@@ -52,7 +52,7 @@ jobs:
 
       - name: "Step 3: Run post-bootstrap validation tests"
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/bootstrap-test.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/0-bootstrap-test.sh | bash
 
   macos-arm:
     name: "Test on: macOS 15 ARM"
@@ -64,5 +64,5 @@ jobs:
 
       - name: "Step 2: Run post-bootstrap validation tests"
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/bootstrap-test.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/0-bootstrap-test.sh | bash
 

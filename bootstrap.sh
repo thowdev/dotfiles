@@ -82,70 +82,111 @@ export XDG_CACHE_HOME="$HOME/.cache"
 #
 
 # ------------------------------------------------------------------------------
+# Prepare MacOS
 #
-ensure_curl_installed() {
-  if ! command -v curl &>/dev/null; then
-    echo "################################################################################"
-    echo "# Installing curl ..."
-    if command -v apt-get &>/dev/null; then
-      $SUDO apt-get update && $SUDO apt-get install -y curl
-    elif command -v dnf &>/dev/null; then
-      $SUDO dnf install -y --allowerasing curl
-    elif command -v zypper &>/dev/null; then
-      $SUDO zypper --quiet install -y curl
-    else
-      echo "No supported package manager to install curl." >&2
-      exit 1
-    fi
-  fi
-}
+prepare_macos() {
+    printf "################################################################################"
+    printf "# %-20s : %s\n" "Operating System" "${OSTYPE}"
+    printf "# %-20s : %s\n" "Operating System" "${OS}"
+    printf "# %-20s : %s\n" "Arch" "${ARCH}"
 
-# ------------------------------------------------------------------------------
-#
-ensure_gzip_installed() {
-  if ! command -v gzip &>/dev/null; then
-    echo "################################################################################"
-    echo "# Installing gzip ..."
-    if command -v apt-get &>/dev/null; then
-      $SUDO apt-get update && $SUDO apt-get install -y gzip
-    elif command -v dnf &>/dev/null; then
-      $SUDO dnf install -y gzip
-    elif command -v zypper &>/dev/null; then
-      $SUDO zypper --quiet install -y gzip
-    else
-      echo "No supported package manager to install gzip." >&2
-      exit 1
+    if [[ "$OSTYPE" == "darwin"* ]] && ! xcode-select -p &>/dev/null; then
+        printf "# %-50s \n" "  - Installing Xcode Command Line Tools ..."
+        echo "Installing Xcode Command Line Tools ..."
+        ${SUDO} xcode-select --install
+        until xcode-select -p &>/dev/null; do
+            sleep 5
+        done
     fi
-  fi
-}
 
-# ------------------------------------------------------------------------------
-#
-ensure_tar_installed() {
-  if ! command -v tar &>/dev/null; then
-    echo "################################################################################"
-    echo "# Installing tar ..."
-    if command -v apt-get &>/dev/null; then
-      $SUDO apt-get update && $SUDO apt-get install -y tar
-    elif command -v dnf &>/dev/null; then
-      $SUDO dnf install -y tar
-    elif command -v zypper &>/dev/null; then
-      $SUDO zypper --quiet install -y tar
-    else
-      echo "No supported package manager to install tar." >&2
-      exit 1
-    fi
-  fi
-}
-
-# ------------------------------------------------------------------------------
-# Install Homebrew on MacOS
-#
-install_brew() {
     if [[ "$OSTYPE" == "darwin"* ]] && ! command -v brew &>/dev/null; then
-        echo "################################################################################"
-        echo "# Installing Homebrew (macOS) ..."
+        printf "# %-50s \n" "  - Installing Homebrew ..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+        echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+
+    brew install bash curl make tar
+}
+
+# ------------------------------------------------------------------------------
+# Prepare Fedora
+#
+prepare_fedora() {
+    printf "################################################################################"
+    printf "# %-20s : %s\n" "Operating System" "${OSTYPE}"
+    printf "# %-20s : %s\n" "Operating System" "${OS}"
+    printf "# %-20s : %s\n" "Arch" "${ARCH}"
+
+    ${SUDO} dnf install -y --allowerasing bash curl gzip make tar
+}
+
+# ------------------------------------------------------------------------------
+# Prepare RHEL/UBI
+#
+prepare_ubi() {
+    printf "################################################################################"
+    printf "# %-20s : %s\n" "Operating System" "${OSTYPE}"
+    printf "# %-20s : %s\n" "Operating System" "${OS}"
+    printf "# %-20s : %s\n" "Arch" "${ARCH}"
+
+    ${SUDO} dnf install -y --allowerasing bash curl gzip make tar
+}
+
+# ------------------------------------------------------------------------------
+# Prepare SLES/LEAP
+#
+prepare_leap() {
+    printf "################################################################################"
+    printf "# %-20s : %s\n" "Operating System" "${OSTYPE}"
+    printf "# %-20s : %s\n" "Operating System" "${OS}"
+    printf "# %-20s : %s\n" "Arch" "${ARCH}"
+
+    ${SUDO} zypper install -y bash curl gzip make tar
+}
+
+# ------------------------------------------------------------------------------
+# Prepare Ubuntu
+#
+prepare_ubuntu() {
+    printf "################################################################################"
+    printf "# %-20s : %s\n" "Operating System" "${OSTYPE}"
+    printf "# %-20s : %s\n" "Operating System" "${OS}"
+    printf "# %-20s : %s\n" "Arch" "${ARCH}"
+
+    ${SUDO} apt update && apt install -y bash curl gzip make tar
+}
+
+prepare_system() {
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        prepare_macos
+        return
+    fi
+
+    if [[ -f /etc/os-release ]]; then
+        . /etc/os-release
+
+        case "$ID" in
+            ubuntu|debian)
+                prepare_ubuntu
+                ;;
+            fedora)
+                prepare_fedora
+                ;;
+            rhel|centos)
+                prepare_ubi
+                ;;
+            opensuse-leap|sles|suse)
+                prepare_leap
+                ;;
+            *)
+                echo "Unsupported Linux distribution: $ID"
+                exit 1
+                ;;
+        esac
+    else
+        echo "Cannot detect Linux distribution (missing /etc/os-release)"
+        exit 1
     fi
 }
 
@@ -216,9 +257,7 @@ run_make_setup() {
 #
 set_sudo_prefix
 
-ensure_curl_installed
-ensure_gzip_installed
-ensure_tar_installed
+prepare_system
 
 install_brew
 install_make
