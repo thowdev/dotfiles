@@ -10,3 +10,5 @@ for test_script in "$(dirname "$0")"/*-BST-*.sh; do
 done
 
 echo "All tests passed"
+
+
