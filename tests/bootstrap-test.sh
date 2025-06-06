@@ -4,10 +4,9 @@ shopt -s nullglob
 
 test_dir="$(dirname "$0")"
 
-echo "Running tests/bootstrap-test.sh (BST)..."
+echo "Running $test_dir/$0 (BST)..."
 
-for test_script in "$test_dir"/*-BST-*.sh; do
-    [ -e "$test_script" ] || continue  # Skip if no matches
+for test_script in $(ls "$test_dir"/*-BST-*.sh | sort); do
     echo "Running $test_script..."
     bash "$test_script"
 done
