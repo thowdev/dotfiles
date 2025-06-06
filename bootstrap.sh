@@ -85,10 +85,11 @@ export XDG_CACHE_HOME="$HOME/.cache"
 #
 prepare_macos() {
     printf "################################################################################\n"
-    printf "# %-20s : %s\n" "Operating System" "${OSTYPE} / ${OS} (${ARCH})"
+    printf "# %-20s : %s\n" "Operating System" "${OSTYPE}/${OS} (${ARCH})"
+    printf "# %-20s :   \n" "Installation"
 
     if [[ "$OSTYPE" == "darwin"* ]] && ! xcode-select -p &>/dev/null; then
-        printf "# %-20s : %s\n" "Installation" "> Xcode Command Line Tools"
+        printf "# %-20s %s\n" "" "> Xcode Command Line Tools"
         echo "Installing Xcode Command Line Tools ..."
         ${SUDO} xcode-select --install
         until xcode-select -p &>/dev/null; do
@@ -97,13 +98,13 @@ prepare_macos() {
     fi
 
     if [[ "$OSTYPE" == "darwin"* ]] && ! command -v brew &>/dev/null; then
-        printf "# %-20s : %s\n" "" "> Homebrew"
+        printf "# %-20s %s\n" "" "> Homebrew"
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
         echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    printf "# %-20s : %s\n" "" "> brew install -q bash curl make"
+    printf "# %-20s %s\n" "" "> brew install -q bash curl make"
     brew install -q bash curl make
 }
 
