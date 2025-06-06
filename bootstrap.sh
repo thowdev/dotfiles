@@ -92,7 +92,7 @@ ensure_curl_installed() {
     elif command -v dnf &>/dev/null; then
       $SUDO dnf install -y --allowerasing curl
     elif command -v zypper &>/dev/null; then
-      $SUDO zypper install -y curl
+      $SUDO zypper --quiet install -y curl
     else
       echo "No supported package manager to install curl." >&2
       exit 1
@@ -111,7 +111,7 @@ ensure_gzip_installed() {
     elif command -v dnf &>/dev/null; then
       $SUDO dnf install -y gzip
     elif command -v zypper &>/dev/null; then
-      $SUDO zypper install -y gzip
+      $SUDO zypper --quiet install -y gzip
     else
       echo "No supported package manager to install gzip." >&2
       exit 1
@@ -130,7 +130,7 @@ ensure_tar_installed() {
     elif command -v dnf &>/dev/null; then
       $SUDO dnf install -y tar
     elif command -v zypper &>/dev/null; then
-      $SUDO zypper install -y tar
+      $SUDO zypper --quiet install -y tar
     else
       echo "No supported package manager to install tar." >&2
       exit 1
@@ -176,7 +176,7 @@ install_make() {
         elif command -v dnf &>/dev/null; then
             ${SUDO} dnf install -y make
         elif command -v zypper &>/dev/null; then
-            ${SUDO} zypper install -y make
+            ${SUDO} zypper --quiet install -y make
         elif command -v brew &>/dev/null; then
             brew install -q make
             if [[ -d "${MAKE_GNUBIN_DIR}" ]]; then

@@ -1,32 +1,39 @@
-name: CI Bootstrap Test
+name: ChezMoi Bootstrap Validation
 
 on:
   push:
-    branches: [tmp]
+    branches: [devel, main, tmp]
   pull_request:
-    branches: [tmp]
+    branches: [devel, main]
   workflow_dispatch:
 
 jobs:
-  linux-distros:
-    runs-on: ubuntu-24.04
+  linux-matrix-test:
     strategy:
       matrix:
-        image:
-          - "ubuntu:24.04"
-          - "fedora:42"
-          - "opensuse/leap:15.6"
-          - "registry.access.redhat.com/ubi8/ubi:8.10"
-          - "registry.access.redhat.com/ubi9/ubi:9.6"
-          - "registry.access.redhat.com/ubi10/ubi:10.0"
+        include:
+          - name: Ubuntu 24.04
+            image: ubuntu:24.04
+          - name: Fedora 42
+            image: fedora:42
+          - name: openSUSE Leap 15.6
+            image: opensuse/leap:15.6
+          - name: UBI 8.10
+            image: registry.access.redhat.com/ubi8/ubi:8.10
+          - name: UBI 9.6
+            image: registry.access.redhat.com/ubi9/ubi:9.6
+          - name: UBI 10.0
+            image: registry.access.redhat.com/ubi10/ubi:10.0
+
+    name: "Test on: ${{ matrix.name }}"
+    runs-on: ubuntu-24.04
     container: ${{ matrix.image }}
+
     steps:
-      - name: Ensure curl
+      - name: "Step 1: Ensure curl is installed"
         shell: bash
         run: |
           if ! command -v curl &>/dev/null; then
-            echo "curl missing, installing..."
-
             if command -v zypper &>/dev/null; then
               zypper --non-interactive install curl
             elif command -v dnf &>/dev/null; then
@@ -39,25 +46,23 @@ jobs:
             fi
           fi
 
-          echo "curl version: $(curl --version | head -n1)"
-
-      - name: Run bootstrap.sh from tmp branch
+      - name: "Step 2: Execute bootstrap script"
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/bootstrap.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/bootstrap.sh | bash
 
-      - name: Run test/test.sh from tmp branch
+      - name: "Step 3: Run post-bootstrap validation tests"
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/tests/bootstrap-test.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/bootstrap-test.sh | bash
 
   macos-arm:
-    name: macOS 15 ARM
+    name: "Test on: macOS 15 ARM"
     runs-on: macos-15
     steps:
-      - name: Run bootstrap.sh from tmp branch
+      - name: "Step 1: Execute bootstrap script"
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/bootstrap.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/bootstrap.sh | bash
 
-      - name: Run test/test.sh from tmp branch
+      - name: "Step 2: Run post-bootstrap validation tests"
         run: |
-          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/tests/bootstrap-test.sh | bash
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/${{ github.ref_name }}/tests/bootstrap-test.sh | bash
 
