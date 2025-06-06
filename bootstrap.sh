@@ -104,8 +104,8 @@ prepare_macos() {
         eval "$(/opt/homebrew/bin/brew shellenv)"
     fi
 
-    printf "#         %-16s\n" "> brew -q install bash curl make"
-    brew -q install bash curl make
+    printf "#         %-16s\n" "> brew install --quiet bash curl make"
+    brew install --quiet bash curl make
 }
 
 # ------------------------------------------------------------------------------
