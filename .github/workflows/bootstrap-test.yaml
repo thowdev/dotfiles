@@ -1,0 +1,65 @@
+name: CI Bootstrap Test
+
+on:
+  push:
+    branches: [tmp]
+  pull_request:
+    branches: [tmp]
+  workflow_dispatch:  # Manual trigger via GitHub UI
+
+jobs:
+  linux-distros:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        image:
+          - "ubuntu:24.04"
+          - "fedora:42"
+          - "opensuse/leap:15.6"
+          - "registry.access.redhat.com/ubi8/ubi:8.10"
+          - "registry.access.redhat.com/ubi9/ubi:9.6"
+          - "registry.access.redhat.com/ubi10/ubi:10.0"
+    container: ${{ matrix.image }}
+    steps:
+      - name: Ensure curl
+        shell: bash
+        run: |
+          if ! command -v curl &>/dev/null; then
+            echo "curl missing, installing..."
+
+            if command -v zypper &>/dev/null; then
+              zypper --non-interactive install curl
+            elif command -v dnf &>/dev/null; then
+              dnf install -y --allowerasing curl
+            elif command -v apt-get &>/dev/null; then
+              apt-get update && apt-get install -y curl
+            else
+              echo "Unknown package manager" >&2
+              exit 1
+            fi
+          else
+            echo "curl is already available"
+          fi
+
+          echo "curl version: $(curl --version | head -n1)"
+
+      - name: Run bootstrap.sh from tmp branch
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/bootstrap.sh | bash
+
+      - name: Run test/test.sh from tmp branch
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/tests/bootstrap-test.sh | bash
+
+  macos-arm:
+    name: macOS 15 ARM
+    runs-on: macos-15
+    steps:
+      - name: Run bootstrap.sh from tmp branch
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/bootstrap.sh | bash
+
+      - name: Run test/test.sh from tmp branch
+        run: |
+          curl -fsSL https://raw.githubusercontent.com/${{ github.repository }}/tmp/tests/bootstrap-test.sh | bash
+

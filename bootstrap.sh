@@ -31,6 +31,21 @@ get_os() {
 }
 
 # ------------------------------------------------------------------------------
+# Determine if sudo is needed, and set SUDO variable accordingly
+#
+set_sudo_prefix() {
+  if [ "$(id -u)" -eq 0 ]; then
+    SUDO=""
+  else
+    if ! command -v sudo &>/dev/null; then
+      echo "sudo is required but not installed" >&2
+      exit 1
+    fi
+    SUDO="sudo"
+  fi
+}
+
+# ------------------------------------------------------------------------------
 #
 version_lt() {
   [ "$1" = "$2" ] && return 1 || [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
@@ -96,13 +111,13 @@ install_make() {
 
     if ! command -v make &>/dev/null || version_lt "$(make --version | head -n1 | awk '{print $3}')" "4.0"; then
         echo "################################################################################"
-        echo "# Installing make..."
+        echo "# Installing make ..."
         if command -v apt &>/dev/null; then
-            sudo apt update && sudo apt install -y build-essential
+            ${SUDO} apt update && ${SUDO} apt install -y build-essential
         elif command -v dnf &>/dev/null; then
-            sudo dnf install -y make
+            ${SUDO} dnf install -y make
         elif command -v zypper &>/dev/null; then
-            sudo zypper install -y make
+            ${SUDO} zypper install -y make
         elif command -v brew &>/dev/null; then
             brew install -q make
             if [[ -d "${MAKE_GNUBIN_DIR}" ]]; then
@@ -120,7 +135,7 @@ install_make() {
 init_dotfiles() {
     echo "################################################################################"
     echo "# Initializing chezmoi ..."
-    chezmoi init --apply thowdev --quiet
+    chezmoi init --apply thowdev
 }
 
 # ------------------------------------------------------------------------------
@@ -135,6 +150,7 @@ run_make_setup() {
 # ------------------------------------------------------------------------------
 # Ordered installation (order is important):
 #
+set_sudo_prefix
 install_brew
 install_make
 install_chezmoi
