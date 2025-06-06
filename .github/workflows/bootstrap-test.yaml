@@ -1,11 +1,7 @@
 name: CI Bootstrap Test
 
 on:
-  push:
-    branches: [tmp]
-  pull_request:
-    branches: [tmp]
-  workflow_dispatch:  # Manual trigger via GitHub UI
+  workflow_dispatch
 
 jobs:
   linux-distros:
@@ -37,8 +33,6 @@ jobs:
               echo "Unknown package manager" >&2
               exit 1
             fi
-          else
-            echo "curl is already available"
           fi
 
           echo "curl version: $(curl --version | head -n1)"

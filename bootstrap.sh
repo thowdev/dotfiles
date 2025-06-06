@@ -79,6 +79,43 @@ export XDG_CACHE_HOME="$HOME/.cache"
 # === Bootstrap functions ===
 #
 #
+
+# ------------------------------------------------------------------------------
+ensure_gzip_installed() {
+  if ! command -v gzip &>/dev/null; then
+    echo "################################################################################"
+    echo "# Installing gzip ..."
+    if command -v apt-get &>/dev/null; then
+      $SUDO apt-get update && $SUDO apt-get install -y gzip
+    elif command -v dnf &>/dev/null; then
+      $SUDO dnf install -y gzip
+    elif command -v zypper &>/dev/null; then
+      $SUDO zypper install -y gzip
+    else
+      echo "No supported package manager to install gzip." >&2
+      exit 1
+    fi
+  fi
+}
+
+# ------------------------------------------------------------------------------
+ensure_tar_installed() {
+  if ! command -v tar &>/dev/null; then
+    echo "################################################################################"
+    echo "# Installing tar ..."
+    if command -v apt-get &>/dev/null; then
+      $SUDO apt-get update && $SUDO apt-get install -y tar
+    elif command -v dnf &>/dev/null; then
+      $SUDO dnf install -y tar
+    elif command -v zypper &>/dev/null; then
+      $SUDO zypper install -y tar
+    else
+      echo "No supported package manager to install tar." >&2
+      exit 1
+    fi
+  fi
+}
+
 # ------------------------------------------------------------------------------
 # Install Homebrew on MacOS
 #
@@ -147,12 +184,18 @@ run_make_setup() {
     make -C "$XDG_DATA_HOME/chezmoi" --silent || true
 }
 
+ensure_prereqs() {
+  set_sudo_prefix
+  ensure_gzip_installed
+  ensure_tar_installed
+  install_brew
+  install_make
+}
+
 # ------------------------------------------------------------------------------
-# Ordered installation (order is important):
+# Ordered installation/setup steps (order is important):
 #
-set_sudo_prefix
-install_brew
-install_make
+ensure_prereqs
 install_chezmoi
 init_dotfiles
 run_make_setup
