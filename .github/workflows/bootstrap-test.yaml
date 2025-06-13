@@ -1,10 +1,6 @@
 name: ChezMoi Bootstrap Validation
 
 on:
-  push:
-    branches: [devel, main, tmp]
-  pull_request:
-    branches: [devel, main]
   workflow_dispatch:
 
 jobs:
