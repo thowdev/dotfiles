@@ -49,7 +49,7 @@ set_sudo_prefix() {
 # Check and compare version
 #
 version_lt() {
-  [ "$1" = "$2" ] && return 1 || [ "$(printf '%s\n' "$1" "$2" | sort -V | head -n1)" != "$2" ]
+  [ "${1}" = "${2}" ] && return 1 || [ "$(printf '%s\n' "${1}" "${2}" | sort -V | head -n1)" != "${2}" ]
 }
 
 ################################################################################
@@ -71,9 +71,9 @@ GIT_REPONAME="thowdev"
 HLB_DIR="${HOME}/.local/bin"
 export PATH="${HLB_DIR}:$PATH"
 
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_CONFIG_HOME="${HOME}/.config"
+export XDG_DATA_HOME="${HOME}/.local/share"
+export XDG_CACHE_HOME="${HOME}/.cache"
 
 mkdir -p ${XDG_CONFIG_HOME} ${XDG_DATA_HOME} ${XDG_CACHE_HOME} ${HLB_DIR}
 
@@ -166,7 +166,7 @@ prepare_system() {
     if [[ -f /etc/os-release ]]; then
         . /etc/os-release
 
-        case "$ID" in
+        case "${ID}" in
             ubuntu|debian)
                 prepare_ubuntu
                 ;;
@@ -180,7 +180,7 @@ prepare_system() {
                 prepare_leap
                 ;;
             *)
-                echo "Unsupported Linux distribution: $ID"
+                echo "Unsupported Linux distribution: ${ID}"
                 exit 1
                 ;;
         esac
@@ -215,7 +215,7 @@ init_dotfiles() {
 run_make_setup() {
     echo "################################################################################"
     echo "# Run chezmoi setup ..."
-    make -C "$XDG_DATA_HOME/chezmoi" --silent || true
+    make -C "${XDG_DATA_HOME}/chezmoi" --silent || true
 }
 
 ################################################################################
