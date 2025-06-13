@@ -190,7 +190,7 @@ install_chezmoi() {
     echo "################################################################################"
     echo "# Installing chezmoi (via official ${CHEZMOI_INSTALL_URL}) ..."
     sh -c "$(curl -fsLS ${CHEZMOI_INSTALL_URL})" -- -b "${HLB_DIR}"
-    ${SUDO} chmod +x "${HLB_DIR}/chezmoi"
+    chmod +x "${HLB_DIR}/chezmoi"
 }
 
 # ------------------------------------------------------------------------------
