@@ -96,6 +96,7 @@ prepare_macos() {
 
     printf "#\n"
     printf "# %s\n" "> brew install --quiet bash curl make"
+    printf "#\n"
     brew install --quiet bash curl make
 }
 
@@ -109,6 +110,7 @@ prepare_fedora() {
 
     printf "# %s\n" "> ${SUDO} dnf install -y --allowerasing bash curl gzip make tar"
     ${SUDO} dnf install -y --allowerasing bash curl gzip make tar
+    printf "#\n"
 }
 
 # ------------------------------------------------------------------------------
@@ -121,6 +123,7 @@ prepare_ubi() {
 
     printf "# %s\n" "> ${SUDO} dnf install -y --allowerasing bash curl gzip make tar"
     ${SUDO} dnf install -y --allowerasing bash curl gzip make tar
+    printf "#\n"
 }
 
 # ------------------------------------------------------------------------------
@@ -133,6 +136,7 @@ prepare_leap() {
 
     printf "# %s\n" "> ${SUDO} zypper install -y bash curl gzip make tar"
     ${SUDO} zypper install -y bash curl gzip make tar
+    printf "#\n"
 }
 
 # ------------------------------------------------------------------------------
@@ -145,6 +149,7 @@ prepare_ubuntu() {
 
     printf "# %s\n" "> ${SUDO} apt-get update && ${SUDO} apt-get install -y bash curl gzip make tar"
     ${SUDO} apt-get update && ${SUDO} apt-get install -y bash build-essential curl gzip make tar
+    printf "#\n"
 }
 
 # ------------------------------------------------------------------------------
@@ -191,6 +196,7 @@ install_chezmoi() {
     echo "# Installing chezmoi (via official ${CHEZMOI_INSTALL_URL}) ..."
     sh -c "$(curl -fsLS ${CHEZMOI_INSTALL_URL})" -- -b "${HLB_DIR}"
     chmod +x "${HLB_DIR}/chezmoi"
+    echo "#"
 }
 
 # ------------------------------------------------------------------------------
@@ -198,8 +204,9 @@ install_chezmoi() {
 #
 init_dotfiles() {
     echo "################################################################################"
-    echo "# Initializing chezmoi ..."
+    echo "# Initializing chezmoi from ${GIT_REPONAME}..."
     chezmoi init --apply ${GIT_REPONAME}
+    echo "#"
 }
 
 # ------------------------------------------------------------------------------
@@ -209,6 +216,7 @@ run_make_setup() {
     echo "################################################################################"
     echo "# Run chezmoi setup ..."
     make -C "${XDG_DATA_HOME}/chezmoi" --silent || true
+    echo "#"
 }
 
 ################################################################################
