@@ -1,2 +1,5 @@
+.git/
 .github/
+bootstrap.sh
+README.md
 tests/
