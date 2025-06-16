@@ -1,0 +1,22 @@
+[packages.fedora.dnf]
+    to_remove = []
+    [packages.fedora.dnf.common]
+        group-packages = [
+        ]
+        packages = [
+            "bat",
+            "curl",
+            "sudo",
+            "tar",
+            "unzip",
+            "wget",
+            "zsh",
+        ]
+    [packages.fedora.dnf.dev_system]
+        group-packages = [
+            "development-tools",
+        ]
+        packages = [
+            "git",
+            "zsh",
+        ]

@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+
+{{ if ne .chezmoi.os "darwin" }}
+echo "Not macOS – skipping package installation script."
+exit 0
+{{ end }}
+
+set -euo pipefail
+
+echo "################################################################################"
+echo "# Ensure Homebrew is installed ..."
+
+if [[ ! $(command -v brew) ]]; then
+    echo "# Installing Homebrew ..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+if [[ -e "/opt/homebrew/bin/brew" && ! $(command -v brew) ]]; then
+    echo "# Adding Homebrew to your PATH"
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
+
+echo "# Homebrew installed!"
+echo "#"
+
+echo "# Generating dynamic Brewfile from .chezmoidata..."
+brew bundle --file=/dev/stdin <<BREWFILE
+
+{{- /* ########################################################################## */}}
+{{- /* Brew packages - common */}}
+{{- range .packages.macos.brew.common.formulae }}
+brew "{{ . }}"
+{{- end }}
+
+{{- /* ########################################################################## */}}
+{{- /* Brew packages - devel */}}
+{{- range .packages.macos.brew.devel.formulae }}
+brew "{{ . }}"
+{{- end }}
+
+BREWFILE
+
+echo ">> Brewfile rendered."
+
+# Optional: remove unwanted packages
+{{- range .packages.macos.brew.to_remove }}
+if brew list "{{ . }}" &>/dev/null; then
+  echo ">> Uninstalling package: {{ . }}"
+  brew uninstall "{{ . }}"
+fi
+{{- end }}
+
+echo ">> Package installation completed."

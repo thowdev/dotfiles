@@ -1,0 +1,17 @@
+[packages.macos.brew]
+    to_remove = []
+    [packages.macos.brew.common]
+        formulae = [
+            "aerc",
+            "bat",
+            "curl",
+            "wget",
+        ]
+    [packages.macos.brew.devel]
+        formulae = [
+            "gh",
+            "git",
+            "iperf3",
+            "make",
+            "stow",
+        ]
