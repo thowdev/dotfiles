@@ -156,6 +156,8 @@ prepare_ubuntu() {
 # Prepare System
 #
 prepare_system() {
+    set_sudo_prefix
+
     if [[ "$OSTYPE" == "darwin"* ]]; then
         prepare_macos
         return
@@ -226,8 +228,6 @@ run_make_setup() {
 # ------------------------------------------------------------------------------
 # Ordered installation/setup steps (order is important):
 #
-set_sudo_prefix
-
 prepare_system
 
 install_chezmoi
