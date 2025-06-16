@@ -1,7 +1,0 @@
-.git/
-.github/
-bootstrap.sh
-Makefile
-makefiles/
-README.md
-tests/
