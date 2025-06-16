@@ -26,44 +26,68 @@ jobs:
     container: ${{ matrix.image }}
 
     steps:
-      - name: "Step 1: Ensure curl | gzip | tar is installed"
+      - name: "Step 1: Install prerequisites"
         shell: bash
         run: |
-          if ! command -v curl &>/dev/null; then
-            if command -v zypper &>/dev/null; then
-              zypper --non-interactive install curl
-            elif command -v dnf &>/dev/null; then
-              dnf install -y --allowerasing curl
-            elif command -v apt-get &>/dev/null; then
-              apt-get update && apt-get install -y curl
-            else
-              echo "Unknown package manager" >&2
-              exit 1
+          # Declare a regular array for the package names
+          declare -a packages=(
+              "curl"
+              "gzip"
+              "tar"
+          )
+
+          declare -a pkgmgrs=(
+              "apt-get"
+              "dnf"
+              "zypper"
+          )
+
+          PKG_MGR=""
+
+          for mgr in "${pkgmgrs[@]}"; do
+            if command -v "${mgr}" &>/dev/null; then
+              PKG_MGR=${mgr}
+              break
             fi
+          done
+
+          if [[ -z "${PKG_MGR}" ]]; then
+            echo "No supported package manager found (apt-get, dnf, zypper)"
+            exit 1
           fi
-          if ! command -v gzip &>/dev/null; then
-            if command -v zypper &>/dev/null; then
-              zypper --non-interactive install gzip
-            elif command -v dnf &>/dev/null; then
-              dnf install -y --allowerasing gzip
-            elif command -v apt-get &>/dev/null; then
-              apt-get update && apt-get install -y gzip
-            else
-              echo "Unknown package manager" >&2
-              exit 1
+
+          to_install=()
+
+          # Loop through the commands to check if they're installed
+          for cmd in "${packages[@]}"; do
+            if ! command -v "${cmd}" &>/dev/null; then
+              to_install+=("${cmd}")
             fi
-          fi
-          if ! command -v tar &>/dev/null; then
-            if command -v zypper &>/dev/null; then
-              zypper --non-interactive install tar
-            elif command -v dnf &>/dev/null; then
-              dnf install -y --allowerasing tar
-            elif command -v apt-get &>/dev/null; then
-              apt-get update && apt-get install -y tar
-            else
-              echo "Unknown package manager" >&2
-              exit 1
-            fi
+          done
+
+          # Install missing packages
+          if (( ${#to_install[@]} > 0 )); then
+            echo "Missing package(s): ${to_install[*]}"
+            echo "Updating package list and installing missing tools..."
+
+            case "${PKG_MGR}" in
+              apt-get)
+                apt-get update
+                apt-get install -y "${to_install[@]}"
+              ;;
+              dnf)
+                dnf install -y --allowerasing "${to_install[@]}"
+              ;;
+              zypper)
+                zypper install -y "${to_install[@]}"
+              ;;
+              *)
+                echo "Unsupported package manager: ${PKG_MGR}"
+                exit 1
+              ;;
+            esac
+          else
+            echo "All required tools are already installed."
           fi
 
       - name: "Step 2: Checkout repo ${{ github.repository }}/${{ github.ref_name }}"
